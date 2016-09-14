@@ -1,0 +1,21 @@
+{
+  "name": "DLXTest",
+  "version": "1.0",
+  "outputDir": "bin",
+  "references": [
+    "System",
+    "Spec",
+    "DLX"
+  ],
+  "modules": [
+    {
+      "name": "DLXTest",
+      "version": "1.0",
+      "sourcePath": [
+        "app",
+        "spec"
+      ]
+    }
+  ],
+  "executable": true
+}
