@@ -24,7 +24,7 @@ package pixeldroid.dsa.dlx
             up.down = down;
             down.up = up;
 
-            column.size -= 1;
+            if (column) column.size -= 1;
         }
 
         public function uncover():void
@@ -32,7 +32,7 @@ package pixeldroid.dsa.dlx
             up.down = this;
             down.up = this;
 
-            column.size += 1;
+            if (column) column.size += 1;
         }
 
         public function toString():String
