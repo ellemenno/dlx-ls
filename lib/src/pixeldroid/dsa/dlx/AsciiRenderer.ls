@@ -16,24 +16,22 @@ package pixeldroid.dsa.dlx
             var matrix:Vector.<Vector.<String>> = [];
             var lines:Vector.<String> = [];
             var line:Vector.<String> = [];
-            var columnList:Vector.<Column> = [];
-            var rowList:Vector.<Node> = [];
+
+            var column:Vector.<Boolean>;
             var row:Number;
+            var rowMarking:Function = function (node:Node):void { column[node.row-1] = true; };
             var empty:Boolean;
 
-            NodeWalker.collect(root, Direction.RIGHT, columnList);
-            for each(var columnStart:Column in columnList)
-            {
+            NodeWalker.apply(root, Direction.RIGHT, function (columnStart:Column):void {
                 line.push(String.lpad(columnStart.label.toString(), '0', 3));
 
-                var column:Vector.<Boolean> = [];
+                column = [];
                 for (row = 1; row <= numRows; row++) column.push(false);
-
-                NodeWalker.collect(columnStart, Direction.DOWN, rowList);
-                for each(var node:Node in rowList) column[node.row-1] = true;
+                NodeWalker.apply(columnStart, Direction.DOWN, rowMarking);
 
                 matrix.push(column);
-            }
+            });
+
             lines.push('___|' + line.join('|') + '|');
 
             for (row = 1; row <= numRows; row++)

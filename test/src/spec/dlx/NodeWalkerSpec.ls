@@ -29,7 +29,7 @@ package dlx
                 it.expects(list).not.toContain(a);
             });
 
-            it.should('collect connected nodes in a given direction', function() {
+            it.should('collect nodes connected in a given direction', function() {
                 var a:Node = new Node(null);
                 var a1:Node = new Node(null);
                 var a2:Node = new Node(null);
@@ -79,6 +79,33 @@ package dlx
                 it.expects(list[1]).toEqual(b);
                 it.expects(list[2]).toEqual(c);
             });
+
+            it.should('act on nodes connected in a given direction', function() {
+                var a:TestNode = new TestNode();
+                var b:TestNode = new TestNode();
+                var c:TestNode = new TestNode();
+                var d:TestNode = new TestNode();
+
+                a.down = b; b.up = a;
+                b.down = c; c.up = b;
+                c.down = a; a.up = c;
+                c.left = d; d.right = c;
+
+                var action:Function = function(node:Node) { node.cover(); node.uncover(); };
+
+                NodeWalker.apply(a, Direction.DOWN, action);
+                it.expects(a.touched).not.toBeTruthy();
+                it.expects(b.touched).toBeTruthy();
+                it.expects(c.touched).toBeTruthy();
+                it.expects(d.touched).not.toBeTruthy();
+            });
         }
+    }
+
+    class TestNode extends Node
+    {
+        public var touched:Boolean = false;
+        public function TestNode() { super(null); }
+        override public function cover():void { touched = true; }
     }
 }

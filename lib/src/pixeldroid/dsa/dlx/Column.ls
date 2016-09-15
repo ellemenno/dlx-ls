@@ -10,8 +10,9 @@ package pixeldroid.dsa.dlx
         public var size:Number;
         public var label:Number;
 
-        private var rowList:Vector.<Node> = [];
-        private var nodeList:Vector.<Node> = [];
+        private var coverAction:Function;
+        private var uncoverAction:Function;
+
 
         public function Column(label:Number)
         {
@@ -19,6 +20,9 @@ package pixeldroid.dsa.dlx
 
             this.label = label;
             size = 0;
+
+            coverAction = function (node:Node):void { node.cover(); };
+            uncoverAction = function (node:Node):void { node.uncover(); };
         }
 
         public function addNode():Node
@@ -41,22 +45,16 @@ package pixeldroid.dsa.dlx
             right.left = left;
             left.right = right;
 
-            NodeWalker.collect(this, Direction.DOWN, rowList);
-            for each(var rowStart:Node in rowList)
-            {
-                NodeWalker.collect(rowStart, Direction.RIGHT, nodeList);
-                for each(var node:Node in nodeList) node.cover();
-            }
+            NodeWalker.apply(this, Direction.DOWN, function (rowStart:Node):void {
+                NodeWalker.apply(rowStart, Direction.RIGHT, coverAction);
+            });
         }
 
         public function uncover():void
         {
-            NodeWalker.collect(this, Direction.UP, rowList);
-            for each(var rowStart:Node in rowList)
-            {
-                NodeWalker.collect(rowStart, Direction.LEFT, nodeList);
-                for each(var node:Node in nodeList) node.uncover();
-            }
+            NodeWalker.apply(this, Direction.UP, function (rowStart:Node):void {
+                NodeWalker.apply(rowStart, Direction.LEFT, uncoverAction);
+            });
 
             right.left = this;
             left.right = this;

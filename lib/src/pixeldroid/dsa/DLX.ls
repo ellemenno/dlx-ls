@@ -7,7 +7,7 @@ package pixeldroid.dsa
     import pixeldroid.dsa.dlx.NodeWalker;
 
     /**
-    A constraint table that uses Knuth's dancing links to implement algorithm x to find solutions.
+    A constraint table using dancing links to implement Knuth's algorithm x for perfect cover solutions.
     */
     public class DLX
     {
@@ -20,6 +20,8 @@ package pixeldroid.dsa
         private var numRows:Number;
         private var root:Column;
         private var searchResult:Vector.<Node>;
+        private var coverAction:Function;
+        private var uncoverAction:Function;
 
 
         public function DLX(numColumns:Number=0)
@@ -29,21 +31,21 @@ package pixeldroid.dsa
             searchResult = [];
             solutions = [];
 
+            coverAction = function (node:Node):void { node.column.cover(); };
+            uncoverAction = function (node:Node):void { node.column.uncover(); };
+
             setColumns(numColumns);
         }
 
         public function addRow(rowList:Vector.<Number>):void
         {
             var addedNodes:Vector.<Node> = [];
-            var columnList:Vector.<Column> = [];
             var i:Number;
 
-            NodeWalker.collect(root, Direction.RIGHT, columnList);
-            for each(var column:Column in columnList)
-            {
+            NodeWalker.apply(root, Direction.RIGHT, function (column:Column):void {
                 i = rowList.indexOf(column.label);
                 if (i > -1) addedNodes.push(column.addNode());
-            }
+            });
 
             var w:Number = addedNodes.length;
             for (i in addedNodes) {
@@ -99,18 +101,15 @@ package pixeldroid.dsa
             var column:Column = root.right.column;
             if (column == root) return null;
 
-            var columnList:Vector.<Column> = [];
             var smallest:Number = column.size;
 
-            NodeWalker.collect(root, Direction.RIGHT, columnList);
-            for each(var candidate:Column in columnList)
-            {
-                if (candidate.size <= smallest)
+            NodeWalker.apply(root, Direction.RIGHT, function (candidate:Column):void {
+                if (candidate.size < smallest)
                 {
                     column = candidate;
                     smallest = candidate.size;
                 }
-            }
+            });
 
             return column;
         }
@@ -124,26 +123,19 @@ package pixeldroid.dsa
                 return;
             }
 
+            while (searchResult.length <= index) searchResult.push(null);
+
             column.cover();
 
-            while (searchResult.length <= index) searchResult.push(null);
-            var rowList:Vector.<Node> = [];
-            var nodeList:Vector.<Node> = [];
-            var node:Node;
-
-            NodeWalker.collect(column, Direction.DOWN, rowList);
-            for each(var rowStart:Node in rowList)
-            {
+            NodeWalker.apply(column, Direction.DOWN, function (rowStart:Node):void {
                 searchResult[index] = rowStart;
-                NodeWalker.collect(rowStart, Direction.RIGHT, nodeList);
-                for each(node in nodeList) node.column.cover();
+                NodeWalker.apply(rowStart, Direction.RIGHT, coverAction);
 
                 search(index + 1);
 
                 rowStart = searchResult[index];
-                NodeWalker.collect(rowStart, Direction.LEFT, nodeList);
-                for each(node in nodeList) node.column.uncover();
-            }
+                NodeWalker.apply(rowStart, Direction.LEFT, uncoverAction);
+            });
 
             column.uncover();
         }
