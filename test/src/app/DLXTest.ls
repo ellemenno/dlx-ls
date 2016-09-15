@@ -11,11 +11,11 @@ package
     import pixeldroid.bdd.reporters.JunitReporter;
 
     import DLXSpec;
-    import DLX_AsciiRendererSpec;
-    import DLX_ColumnSpec;
-    import DLX_DirectionSpec;
-    import DLX_NodeSpec;
-    import DLX_WalkerSpec;
+    import dlx.AsciiRendererSpec;
+    import dlx.ColumnSpec;
+    import dlx.DirectionSpec;
+    import dlx.NodeSpec;
+    import dlx.NodeWalkerSpec;
 
 
     public class DLXTest extends ConsoleApplication
@@ -27,11 +27,11 @@ package
         override public function run():void
         {
             DLXSpec.describe();
-            DLX_AsciiRendererSpec.describe();
-            DLX_ColumnSpec.describe();
-            DLX_DirectionSpec.describe();
-            DLX_NodeSpec.describe();
-            DLX_WalkerSpec.describe();
+            AsciiRendererSpec.describe();
+            ColumnSpec.describe();
+            DirectionSpec.describe();
+            NodeSpec.describe();
+            NodeWalkerSpec.describe();
 
             parseArgs();
             Process.exit(Spec.execute(seed) ? SUCCESS : FAILURE);

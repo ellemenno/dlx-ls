@@ -1,22 +1,23 @@
-package
+package dlx
 {
     import pixeldroid.bdd.Spec;
     import pixeldroid.bdd.Thing;
 
-    import pixeldroid.dsa.DLX_Column;
-    import pixeldroid.dsa.DLX_Node;
+    import pixeldroid.dsa.dlx.Column;
+    import pixeldroid.dsa.dlx.Node;
 
-    public static class DLX_NodeSpec
+
+    public static class NodeSpec
     {
         public static function describe():void
         {
-            var it:Thing = Spec.describe('DLX_Node');
+            var it:Thing = Spec.describe('dlx.Node');
 
             it.should('disconnect from the node chain when covered and reconnect when uncovered', function() {
-                var col:DLX_Column = new DLX_Column(0);
-                var a:DLX_Node = col.addNode();
-                var b:DLX_Node = col.addNode();
-                var c:DLX_Node = col.addNode();
+                var col:Column = new Column(0);
+                var a:Node = col.addNode();
+                var b:Node = col.addNode();
+                var c:Node = col.addNode();
 
                 it.expects(a.down).toEqual(b);
                 it.expects(c.up).toEqual(b);
@@ -33,12 +34,12 @@ package
             });
 
             it.should('change its column\'s size when covered and uncovered', function() {
-                var col:DLX_Column = new DLX_Column(0);
+                var col:Column = new Column(0);
                 it.expects(col.size).toEqual(0);
 
-                var a:DLX_Node = col.addNode();
-                var b:DLX_Node = col.addNode();
-                var c:DLX_Node = col.addNode();
+                var a:Node = col.addNode();
+                var b:Node = col.addNode();
+                var c:Node = col.addNode();
                 it.expects(col.size).toEqual(3);
 
                 b.cover();

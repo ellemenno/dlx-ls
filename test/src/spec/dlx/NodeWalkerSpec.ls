@@ -1,51 +1,52 @@
-package
+package dlx
 {
     import pixeldroid.bdd.Spec;
     import pixeldroid.bdd.Thing;
 
-    import pixeldroid.dsa.DLX_Direction;
-    import pixeldroid.dsa.DLX_Node;
-    import pixeldroid.dsa.DLX_Walker;
+    import pixeldroid.dsa.dlx.Direction;
+    import pixeldroid.dsa.dlx.Node;
+    import pixeldroid.dsa.dlx.NodeWalker;
 
-    public static class DLX_WalkerSpec
+
+    public static class NodeWalkerSpec
     {
         public static function describe():void
         {
-            var it:Thing = Spec.describe('DLX_Walker');
+            var it:Thing = Spec.describe('dlx.NodeWalker');
 
-            var list:Vector.<DLX_Node> = [];
+            var list:Vector.<Node> = [];
 
             it.should('not collect the start node', function() {
-                var a:DLX_Node = new DLX_Node(null);
-                var b:DLX_Node = new DLX_Node(null);
-                var c:DLX_Node = new DLX_Node(null);
+                var a:Node = new Node(null);
+                var b:Node = new Node(null);
+                var c:Node = new Node(null);
 
                 a.right = b;
                 b.right = c;
                 c.right = a;
 
-                DLX_Walker.collect(a, DLX_Direction.RIGHT, list);
+                NodeWalker.collect(a, Direction.RIGHT, list);
                 it.expects(list).not.toContain(a);
             });
 
             it.should('collect connected nodes in a given direction', function() {
-                var a:DLX_Node = new DLX_Node(null);
-                var a1:DLX_Node = new DLX_Node(null);
-                var a2:DLX_Node = new DLX_Node(null);
-                var b:DLX_Node = new DLX_Node(null);
-                var c:DLX_Node = new DLX_Node(null);
-                var d:DLX_Node = new DLX_Node(null);
+                var a:Node = new Node(null);
+                var a1:Node = new Node(null);
+                var a2:Node = new Node(null);
+                var b:Node = new Node(null);
+                var c:Node = new Node(null);
+                var d:Node = new Node(null);
 
-                DLX_Walker.collect(d, DLX_Direction.RIGHT, list);
+                NodeWalker.collect(d, Direction.RIGHT, list);
                 it.expects(list.length).toEqual(0);
 
-                DLX_Walker.collect(d, DLX_Direction.UP, list);
+                NodeWalker.collect(d, Direction.UP, list);
                 it.expects(list.length).toEqual(0);
 
-                DLX_Walker.collect(d, DLX_Direction.LEFT, list);
+                NodeWalker.collect(d, Direction.LEFT, list);
                 it.expects(list.length).toEqual(0);
 
-                DLX_Walker.collect(d, DLX_Direction.DOWN, list);
+                NodeWalker.collect(d, Direction.DOWN, list);
                 it.expects(list.length).toEqual(0);
 
                 a.right = a1; a1.right = a2; a2.right = a;
@@ -56,23 +57,23 @@ package
                 c.down = d; c.up = b;
                 d.down = a; d.up = c;
 
-                DLX_Walker.collect(a, DLX_Direction.RIGHT, list);
+                NodeWalker.collect(a, Direction.RIGHT, list);
                 it.expects(list.length).toEqual(2);
                 it.expects(list[0]).toEqual(a1);
                 it.expects(list[1]).toEqual(a2);
 
-                DLX_Walker.collect(a, DLX_Direction.LEFT, list);
+                NodeWalker.collect(a, Direction.LEFT, list);
                 it.expects(list.length).toEqual(2);
                 it.expects(list[0]).toEqual(a2);
                 it.expects(list[1]).toEqual(a1);
 
-                DLX_Walker.collect(b, DLX_Direction.UP, list);
+                NodeWalker.collect(b, Direction.UP, list);
                 it.expects(list.length).toEqual(3);
                 it.expects(list[0]).toEqual(a);
                 it.expects(list[1]).toEqual(d);
                 it.expects(list[2]).toEqual(c);
 
-                DLX_Walker.collect(d, DLX_Direction.DOWN, list);
+                NodeWalker.collect(d, Direction.DOWN, list);
                 it.expects(list.length).toEqual(3);
                 it.expects(list[0]).toEqual(a);
                 it.expects(list[1]).toEqual(b);

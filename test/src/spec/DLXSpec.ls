@@ -4,7 +4,7 @@ package
     import pixeldroid.bdd.Thing;
 
     import pixeldroid.dsa.DLX;
-    import pixeldroid.dsa.DLX_Node;
+
 
     public static class DLXSpec
     {

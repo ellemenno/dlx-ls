@@ -1,13 +1,14 @@
-package
+package dlx
 {
     import pixeldroid.bdd.Spec;
     import pixeldroid.bdd.Thing;
 
     import pixeldroid.dsa.DLX;
-    import pixeldroid.dsa.DLX_AsciiRenderer;
-    import pixeldroid.dsa.DLX_Column;
+    import pixeldroid.dsa.dlx.AsciiRenderer;
+    import pixeldroid.dsa.dlx.Column;
 
-    public static class DLX_AsciiRendererSpec
+
+    public static class AsciiRendererSpec
     {
         private static function getSampleMatrix():DLX
         {
@@ -25,7 +26,7 @@ package
 
         public static function describe():void
         {
-            var it:Thing = Spec.describe('DLX_AsciiRenderer');
+            var it:Thing = Spec.describe('dlx.AsciiRenderer');
 
             it.should('provide a human-readable string rendering', function() {
                 var dlx:DLX = getSampleMatrix();
@@ -44,7 +45,7 @@ package
 
             it.should('skip empty columns and rows', function() {
                 var dlx:DLX = getSampleMatrix();
-                var c3:DLX_Column = dlx.getColumn(3);
+                var c3:Column = dlx.getColumn(3);
                 var result:Vector.<String> = [
                 '___|001|002|004|005|006|007|',
                 '002| x |   | x |   |   | x |',
@@ -66,7 +67,7 @@ package
                 '005|   | x |   |   |   |   | x |',
                 ];
 
-                it.expects(DLX_AsciiRenderer.render(dlx, [1,4,5])).toEqual(result.join('\n'));
+                it.expects(AsciiRenderer.render(dlx, [1,4,5])).toEqual(result.join('\n'));
             });
         }
     }
