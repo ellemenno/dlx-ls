@@ -10,95 +10,105 @@ package dlx
 
     public static class NodeWalkerSpec
     {
+        private static const it:Thing = Spec.describe('dlx.NodeWalker');
+
         public static function describe():void
         {
-            var it:Thing = Spec.describe('dlx.NodeWalker');
+            it.should('not collect the start node', not_collect_start);
+            it.should('collect nodes connected in a given direction', collect_by_direction);
+            it.should('act on nodes connected in a given direction', process_by_direction);
+        }
 
+
+        private static function not_collect_start():void
+        {
             var list:Vector.<Node> = [];
 
-            it.should('not collect the start node', function() {
-                var a:Node = new Node(null);
-                var b:Node = new Node(null);
-                var c:Node = new Node(null);
+            var a:Node = new Node(null);
+            var b:Node = new Node(null);
+            var c:Node = new Node(null);
 
-                a.right = b;
-                b.right = c;
-                c.right = a;
+            a.right = b;
+            b.right = c;
+            c.right = a;
 
-                NodeWalker.collect(a, Direction.RIGHT, list);
-                it.expects(list).not.toContain(a);
-            });
+            NodeWalker.collect(a, Direction.RIGHT, list);
+            it.expects(list).not.toContain(a);
+        }
 
-            it.should('collect nodes connected in a given direction', function() {
-                var a:Node = new Node(null);
-                var a1:Node = new Node(null);
-                var a2:Node = new Node(null);
-                var b:Node = new Node(null);
-                var c:Node = new Node(null);
-                var d:Node = new Node(null);
+        private static function collect_by_direction():void
+        {
+            var list:Vector.<Node> = [];
 
-                NodeWalker.collect(d, Direction.RIGHT, list);
-                it.expects(list.length).toEqual(0);
+            var a:Node = new Node(null);
+            var a1:Node = new Node(null);
+            var a2:Node = new Node(null);
+            var b:Node = new Node(null);
+            var c:Node = new Node(null);
+            var d:Node = new Node(null);
 
-                NodeWalker.collect(d, Direction.UP, list);
-                it.expects(list.length).toEqual(0);
+            NodeWalker.collect(d, Direction.RIGHT, list);
+            it.expects(list.length).toEqual(0);
 
-                NodeWalker.collect(d, Direction.LEFT, list);
-                it.expects(list.length).toEqual(0);
+            NodeWalker.collect(d, Direction.UP, list);
+            it.expects(list.length).toEqual(0);
 
-                NodeWalker.collect(d, Direction.DOWN, list);
-                it.expects(list.length).toEqual(0);
+            NodeWalker.collect(d, Direction.LEFT, list);
+            it.expects(list.length).toEqual(0);
 
-                a.right = a1; a1.right = a2; a2.right = a;
-                a.left = a2; a2.left = a1; a1.left = a;
+            NodeWalker.collect(d, Direction.DOWN, list);
+            it.expects(list.length).toEqual(0);
 
-                a.down = b; a.up = d;
-                b.down = c; b.up = a;
-                c.down = d; c.up = b;
-                d.down = a; d.up = c;
+            a.right = a1; a1.right = a2; a2.right = a;
+            a.left = a2; a2.left = a1; a1.left = a;
 
-                NodeWalker.collect(a, Direction.RIGHT, list);
-                it.expects(list.length).toEqual(2);
-                it.expects(list[0]).toEqual(a1);
-                it.expects(list[1]).toEqual(a2);
+            a.down = b; a.up = d;
+            b.down = c; b.up = a;
+            c.down = d; c.up = b;
+            d.down = a; d.up = c;
 
-                NodeWalker.collect(a, Direction.LEFT, list);
-                it.expects(list.length).toEqual(2);
-                it.expects(list[0]).toEqual(a2);
-                it.expects(list[1]).toEqual(a1);
+            NodeWalker.collect(a, Direction.RIGHT, list);
+            it.expects(list.length).toEqual(2);
+            it.expects(list[0]).toEqual(a1);
+            it.expects(list[1]).toEqual(a2);
 
-                NodeWalker.collect(b, Direction.UP, list);
-                it.expects(list.length).toEqual(3);
-                it.expects(list[0]).toEqual(a);
-                it.expects(list[1]).toEqual(d);
-                it.expects(list[2]).toEqual(c);
+            NodeWalker.collect(a, Direction.LEFT, list);
+            it.expects(list.length).toEqual(2);
+            it.expects(list[0]).toEqual(a2);
+            it.expects(list[1]).toEqual(a1);
 
-                NodeWalker.collect(d, Direction.DOWN, list);
-                it.expects(list.length).toEqual(3);
-                it.expects(list[0]).toEqual(a);
-                it.expects(list[1]).toEqual(b);
-                it.expects(list[2]).toEqual(c);
-            });
+            NodeWalker.collect(b, Direction.UP, list);
+            it.expects(list.length).toEqual(3);
+            it.expects(list[0]).toEqual(a);
+            it.expects(list[1]).toEqual(d);
+            it.expects(list[2]).toEqual(c);
 
-            it.should('act on nodes connected in a given direction', function() {
-                var a:TestNode = new TestNode();
-                var b:TestNode = new TestNode();
-                var c:TestNode = new TestNode();
-                var d:TestNode = new TestNode();
+            NodeWalker.collect(d, Direction.DOWN, list);
+            it.expects(list.length).toEqual(3);
+            it.expects(list[0]).toEqual(a);
+            it.expects(list[1]).toEqual(b);
+            it.expects(list[2]).toEqual(c);
+        }
 
-                a.down = b; b.up = a;
-                b.down = c; c.up = b;
-                c.down = a; a.up = c;
-                c.left = d; d.right = c;
+        private static function process_by_direction():void
+        {
+            var a:TestNode = new TestNode();
+            var b:TestNode = new TestNode();
+            var c:TestNode = new TestNode();
+            var d:TestNode = new TestNode();
 
-                var action:Function = function(node:Node) { node.cover(); node.uncover(); };
+            a.down = b; b.up = a;
+            b.down = c; c.up = b;
+            c.down = a; a.up = c;
+            c.left = d; d.right = c;
 
-                NodeWalker.apply(a, Direction.DOWN, action);
-                it.expects(a.touched).not.toBeTruthy();
-                it.expects(b.touched).toBeTruthy();
-                it.expects(c.touched).toBeTruthy();
-                it.expects(d.touched).not.toBeTruthy();
-            });
+            var action:Function = function(node:Node) { node.cover(); node.uncover(); };
+
+            NodeWalker.apply(a, Direction.DOWN, action);
+            it.expects(a.touched).not.toBeTruthy();
+            it.expects(b.touched).toBeTruthy();
+            it.expects(c.touched).toBeTruthy();
+            it.expects(d.touched).not.toBeTruthy();
         }
     }
 

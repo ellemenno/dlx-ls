@@ -8,16 +8,20 @@ package dlx
 
     public static class DirectionSpec
     {
+        private static const it:Thing = Spec.describe('dlx.Direction');
+
         public static function describe():void
         {
-            var it:Thing = Spec.describe('dlx.Direction');
+            it.should('provide UP, DOWN, LEFT, and RIGHT', provide_directions);
+        }
 
-            it.should('provide UP, DOWN, LEFT, and RIGHT', function() {
-                it.expects(Direction.UP.toString()).toEqual('UP');
-                it.expects(Direction.DOWN.toString()).toEqual('DOWN');
-                it.expects(Direction.LEFT.toString()).toEqual('LEFT');
-                it.expects(Direction.RIGHT.toString()).toEqual('RIGHT');
-            });
+
+        private static function provide_directions():void
+        {
+            it.expects(Direction.UP.toString()).toEqual('UP');
+            it.expects(Direction.DOWN.toString()).toEqual('DOWN');
+            it.expects(Direction.LEFT.toString()).toEqual('LEFT');
+            it.expects(Direction.RIGHT.toString()).toEqual('RIGHT');
         }
     }
 }
